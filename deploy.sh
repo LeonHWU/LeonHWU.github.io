@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
-pnpm exec hexo clean && pnpm exec hexo generate
-git worktree add .deploy gh-pages 2>/dev/null || git worktree add -B gh-pages .deploy
-rsync -a --delete public/ .deploy/ && touch .deploy/.nojekyll
-git -C .deploy add -A && git -C .deploy commit -m "deploy $(date -u +%FT%TZ)" || true && git -C .deploy push origin gh-pages
 
+# Clean and generate static files
+pnpm exec hexo clean
+pnpm exec hexo generate
 
+# Copy files to root directory and add .nojekyll
+cp -r public/* .
+touch .nojekyll
+
+# Add, commit and push to main branch
+git add .
+git commit -m "deploy $(date -u +%FT%TZ)"
+git push origin main
